@@ -1,13 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <title>Registro</title>
-</head>
+<?php
+
+    require_once 'controller/UsuarioController.php';
+    $usuario = new UsuarioController();
+    $usuario->registro();
+
+    # session_start();
+    # $_SESSION['dato'] = 'valor';
+    # $_SESSION['rol'] = 'admin';
+    # session_destroy();
+
+    # $_GET['variable'];
+    # $_POST['variable'];
+
+    if(isset($_POST['registrar'])) {
+        $datos = array(
+            'nombre' => $_POST['nombre'],
+            'apodo' => $_POST['apodo'],
+            'email' => $_POST['email'],
+            'password' => md5($_POST['password'])
+        );
+
+        $usuario->guardarUsuario($datos);
+    }
+
+?>
 <body>
     <div class="container-fluid register-login">
         <div class="row wrapper">
@@ -20,44 +36,52 @@
                 <div class="container-form">
                     <h1 class="register-login-h1">Registro</h1>
                     <p class="register-login-p">Por favor ingrese sus datos para crear su cuenta</p>
-                    <form>
+
+                    <?php
+
+                        if(isset($_SESSION['mensaje'])) {
+                            echo "<div class='alert alert-primary' role='alert'>".$_SESSION['mensaje']."</div>";
+                        }
+                    ?>
+
+                    <form action="#" method="POST" name="registroForm" id="registroForm">
                         <div class="row">
                             <div class="col-lg">
                                 <div class="form-group">
-                                    <input type="text" id="firstname" class="form-control" required>
-                                    <label for="firstname" class="form-label">Nombre</label>
+                                    <input type="text" id="nombre" name="nombre" class="form-control" required>
+                                    <label for="nombre" class="form-label">Nombre</label>
                                 </div>
                             </div>
 
                             <div class="col-lg">
                                 <div class="form-group">
-                                    <input type="text" id="username" class="form-control" required>
-                                    <label for="username" class="form-label">Apodo</label>
+                                    <input type="text" id="apodo" name="apodo" class="form-control" required>
+                                    <label for="apodo" class="form-label">Apodo</label>
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                                <input type="email" id="email" class="form-control" required>
+                                <input type="email" id="email" name="email" class="form-control" required>
                                 <label for="email" class="form-label">E-mail</label>
                             </div>
                         <div class="form-group">
-                            <input type="password" id="password" class="form-control" required>
+                            <input type="password" id="password" name="password" class="form-control" required>
                             <label for="password" class="form-label">Contraseña</label>
                         </div>
                         <div class="form-group margin--bottom">
-                                <input type="password" id="confirmpassword" class="form-control" required>
+                                <input type="password" id="confirmpassword" name="confirmpassword" class="form-control" required>
                                 <label for="confirmpassword" class="form-label">Confirmar contraseña</label>
                             </div>
                         <div class="d-flex justify-content-between">
                             <div class="d-flex align-items-center">
-                                <input class="form-check-input checked--form--input" type="checkbox" id="remember" value="">
-                                <label class="form-check-label order-2" for="remember">Acepto los términos y condiciones</label>
-                                <label class="label--ckecked order-1" for="remember"></label>
+                                <input class="form-check-input checked--form--input" type="checkbox" id="acepto" value="">
+                                <label class="form-check-label order-2" for="acepto">Acepto los términos y condiciones</label>
+                                <label class="label--ckecked order-1" for="acepto"></label>
                             </div>
                         </div>
                         <div class="d-flex justify-content-lg-center">
-                            <button type="button"class="btn btn-signup--register align-self-center">Aceptar</button>
+                            <button type="submit" id="registrar" name="registrar" class="btn btn-signup--register align-self-center">Aceptar</button>
                         </div>
                         <a href="#" class="register-link--haveaccount">¿Ya tiene una contraseña? Entrar</a>
                     </form>
