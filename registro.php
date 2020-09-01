@@ -4,7 +4,7 @@
     $usuario = new UsuarioController();
     $usuario->registro();
 
-    # session_start();
+    session_start();
     # $_SESSION['dato'] = 'valor';
     # $_SESSION['rol'] = 'admin';
     # session_destroy();
@@ -12,15 +12,31 @@
     # $_GET['variable'];
     # $_POST['variable'];
 
-    if(isset($_POST['registrar'])) {
-        $datos = array(
-            'nombre' => $_POST['nombre'],
-            'apodo' => $_POST['apodo'],
-            'email' => $_POST['email'],
-            'password' => md5($_POST['password'])
-        );
+    #CSRF    
+    
+    if(empty($_SESSION['key'])) {
+        $_SESSION['key'] = bin2hex( random_bytes(32) );        
+    }
 
-        $usuario->guardarUsuario($datos);
+    //echo $_SESSION['key'];
+
+    # creando CSRF token
+    $scrf = hash_hmac('sha256', 'registro.php', $_SESSION['key']);
+
+    if(isset($_POST['registrar'])) {
+        if(hash_equals($scrf, $_POST['csrf'])){
+            $datos = array(
+                'nombre' => $_POST['nombre'],
+                'apodo' => $_POST['apodo'],
+                'email' => $_POST['email'],
+                'password' => md5($_POST['password'])
+            );
+
+            $usuario->guardarUsuario($datos);
+        } else {
+            header("Location: error.php");
+            die();
+        }    
     }
 
 ?>
@@ -45,6 +61,9 @@
                     ?>
 
                     <form action="#" method="POST" name="registroForm" id="registroForm">
+
+                        <input type="hidden" name="csrf" id="csrf" value="<?php echo $scrf;?>">
+
                         <div class="row">
                             <div class="col-lg">
                                 <div class="form-group">

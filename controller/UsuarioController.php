@@ -12,11 +12,13 @@ class UsuarioController {
 	public function guardarUsuario($datos) {
 		$errores = '';
 		if(!isset($datos['email'])) {
-			$errores = '<p>Falta el nombre</p>';
+			$errores = '<p>Falta el email</p>';
 		}
 
 		$usuario = new Usuario();
 		$usuario->guardarUsuario($datos);
+
+		session_destroy();
 	}
 
 }
